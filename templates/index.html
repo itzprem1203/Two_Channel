@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp UI</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        .flex {
+            width: 100%;
+            max-width: 400px;
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .flex-col {
+            display: flex;
+            flex-direction: column;
+        }
+        .p-4 {
+            padding: 16px;
+        }
+        .mb-4 {
+            margin-bottom: 16px;
+        }
+        .space-x-2 > * {
+            margin-right: 8px;
+        }
+        .space-x-2 > *:last-child {
+            margin-right: 0;
+        }
+        .rounded-lg {
+            border-radius: 8px;
+        }
+        .bg-card {
+            background-color: #ffffff;
+        }
+        .text-foreground {
+            color: #333;
+        }
+        .shadow-md {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .font-semibold {
+            font-weight: 600;
+        }
+        .rounded {
+            border-radius: 4px;
+        }
+        .border {
+            border: 1px solid #ddd;
+        }
+        .border-border {
+            border-color: #ccc;
+        }
+        .bg-secondary {
+            background-color: #f5f5f5;
+        }
+        .text-secondary-foreground {
+            color: #555;
+        }
+        .text-muted-foreground {
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+    <div class="flex flex-col w-full max-w-md p-4 bg-card text-foreground rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Chats</h2>
+        <div class="mb-4">
+            <input type="text" placeholder="Search" class="w-full p-2 border border-border rounded-lg" />
+        </div>
+        <div class="flex space-x-2 mb-4">
+            <button class="bg-secondary text-secondary-foreground hover:bg-secondary/80 p-2 rounded">All</button>
+            <button class="bg-secondary text-secondary-foreground hover:bg-secondary/80 p-2 rounded">Unread</button>
+            <button class="bg-secondary text-secondary-foreground hover:bg-secondary/80 p-2 rounded">Favourites</button>
+            <button class="bg-secondary text-secondary-foreground hover:bg-secondary/80 p-2 rounded">Groups</button>
+        </div>
+        <div id="chat-list" class="flex flex-col space-y-2"></div>
+    </div>
+
+    <script>
+        // Fetch chat data from backend and populate the UI
+        async function fetchChats() {
+            try {
+                const response = await axios.get('/get_chats');
+                const chats = response.data;
+                const chatList = document.getElementById('chat-list');
+
+                chats.forEach(chat => {
+                    const chatItem = document.createElement('div');
+                    chatItem.className = 'flex items-center justify-between p-2 border-b border-border';
+                    chatItem.innerHTML = `
+                        <div class="flex items-center">
+                            <img src="https://openui.fly.dev/openui/24x24.svg?text=${chat.icon}" alt="icon" class="w-8 h-8 mr-2" />
+                            <div>
+                                <span class="font-semibold">${chat.name}</span>
+                                <p class="text-muted-foreground">${chat.info}</p>
+                            </div>
+                        </div>
+                        <span class="text-xs text-muted-foreground">${chat.time}</span>
+                    `;
+                    chatList.appendChild(chatItem);
+                });
+            } catch (error) {
+                console.error("Error fetching chats:", error);
+            }
+        }
+
+        // Call fetchChats on page load
+        fetchChats();
+    </script>
+</body>
+</html>
