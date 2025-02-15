@@ -22,13 +22,7 @@ class paraTableData(models.Model):
     low_master = models.CharField(max_length=100, blank=True)
     high_master = models.CharField(max_length=100, blank=True)
     nominal = models.CharField(max_length=100, blank=True)
-    lsl = models.CharField(max_length=100, blank=True)
-    usl = models.CharField(max_length=100, blank=True)
-    ltl = models.CharField(max_length=100, blank=True)
-    utl = models.CharField(max_length=100, blank=True)
     step_no = models.CharField(max_length=10, blank=True)
-    auto_man = models.BooleanField(default=False)
-    timer = models.CharField(max_length=100, blank=True)
     digits = models.CharField(max_length=10, blank=True)
     id_od = models.CharField(max_length=10, blank=True)
 
@@ -103,7 +97,7 @@ class Data_Shift(models.Model):
         super().save(*args, **kwargs)
 
 
-class MeasurementData(models.Model):
+class angle_stored(models.Model):
     date = models.DateTimeField()
     comp_sr_no = models.CharField(max_length=100)
     part_model = models.CharField(max_length=100)
@@ -111,20 +105,15 @@ class MeasurementData(models.Model):
     operator = models.CharField(max_length=100)
     shift = models.CharField(max_length=10)
     parameter_name = models.CharField(max_length=100)
-    lsl = models.FloatField()
-    usl = models.FloatField()
-    ltl = models.FloatField()
-    utl = models.FloatField()
     nominal = models.FloatField()
     output = models.FloatField()
-    max_value = models.FloatField()
-    min_value = models.FloatField()
-    tir_value = models.FloatField()
-    overall_status = models.CharField(max_length=100)
     angleValue = models.FloatField(default=False)
+    andjacentValue = models.FloatField()
+    channelValue = models.FloatField()
 
     def __str__(self):
         return f"Measurement for {self.part_name} on {self.date_time}"
+
 
 
 

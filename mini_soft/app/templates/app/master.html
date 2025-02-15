@@ -350,7 +350,7 @@ function logSelectedValue() {
 
 
 
-    function calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowMaster, highMaster, lsl, usl, ltl, utl, probeNumber, parameterNames, digits) {
+function calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowMaster, highMaster, probeNumber, parameterNames, digits) {
     const textareaId = mapProbeToTextareaId(probeNumber);
     const textarea = document.getElementById(textareaId);
 
@@ -397,21 +397,21 @@ function logSelectedValue() {
             const decimalPlaces = parseFloat(digits[index]);
             outputInput.value = !isNaN(decimalPlaces) ? displayOutput.toFixed(decimalPlaces) : displayOutput;
 
-            // Update background color based on the output
-            if (displayOutput >= lsl[index] && displayOutput <= usl[index]) {
-                outputInput.style.backgroundColor = '#00ff00'; // Green
-            } else if ((displayOutput > usl[index] && displayOutput <= utl[index]) || 
-                       (displayOutput >= ltl[index] && displayOutput < lsl[index])) {
-                outputInput.style.backgroundColor = 'yellow';
-            } else if (displayOutput > utl[index] || displayOutput < ltl[index]) {
-                outputInput.style.backgroundColor = 'red';
-            }
+            // // Update background color based on the output
+            // if (displayOutput >= lsl[index] && displayOutput <= usl[index]) {
+            //     outputInput.style.backgroundColor = '#00ff00'; // Green
+            // } else if ((displayOutput > usl[index] && displayOutput <= utl[index]) || 
+            //            (displayOutput >= ltl[index] && displayOutput < lsl[index])) {
+            //     outputInput.style.backgroundColor = 'yellow';
+            // } else if (displayOutput > utl[index] || displayOutput < ltl[index]) {
+            //     outputInput.style.backgroundColor = 'red';
+            // }
 
             // Clear existing interval and set a new one for recalculating
             if (containerIntervals[outputInput.id]) {
                 clearInterval(containerIntervals[outputInput.id]);
             }
-            var intervalId = setInterval(() => calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowMaster, highMaster, lsl, usl, ltl, utl, probeNumber, parameterNames, digits), 500);
+            var intervalId = setInterval(() => calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowMaster, highMaster, probeNumber, parameterNames, digits), 500);
             containerIntervals[outputInput.id] = intervalId;
         } else {
             console.error("Output input not found or does not have an ID.");
@@ -449,10 +449,10 @@ function fetchAndDisplayValues(selectedValue) {
             const probe_number = response.probe_number;
             const step_no = response.stepnumbers;
             const nominals = response.nominals;
-            const ltl = response.ltls;
-            const utl = response.utls;
-            const lsl = response.lsls;
-            const usl = response.usls;
+            // const ltl = response.ltls;
+            // const utl = response.utls;
+            // const lsl = response.lsls;
+            // const usl = response.usls;
             const id_od = response.idorod;
             const digits = response.digits;
             console.log('your gits are this :',digits);
@@ -526,14 +526,14 @@ function fetchAndDisplayValues(selectedValue) {
                         const textareaValue = (textarea.value.trim() === '' || isNaN(parseFloat(textarea.value))) ? 0 : parseFloat(textarea.value);
                         
                         // Pass the specific probe_number, parameterNames, and other necessary values
-                        calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowmaster[index], highmaster[index], lsl, usl, ltl, utl, probeNumber, parameterNames,digits);
+                        calculateAndUpdateDisplayOutput(index, textareaValue, parameterValues, lowmaster[index], highmaster[index], probeNumber, parameterNames,digits);
                     });
                 }
 
                 // Call the function to calculate and update the display output on page load
                 const initialTextareaValue = textarea ? textarea.value : '';
                 const initialValue = (initialTextareaValue.trim() === '' || isNaN(parseFloat(initialTextareaValue))) ? 0 : parseFloat(initialTextareaValue);
-                calculateAndUpdateDisplayOutput(index, initialValue, parameterValues, lowmaster[index], highmaster[index], lsl, usl, ltl, utl, probeNumber, parameterNames,digits);
+                calculateAndUpdateDisplayOutput(index, initialValue, parameterValues, lowmaster[index], highmaster[index], probeNumber, parameterNames,digits);
             });
         },
         error: function (error) {
@@ -661,10 +661,10 @@ document.getElementById("highMasterBtn").addEventListener("click", function () {
     const probe_number = response.probe_number;
     const nominals = response.nominals;
     const step_no = response.stepnumbers;
-    const lsl = response.lsls;
-    const usl = response.usls;
-    const ltl = response.ltls;
-    const utl = response.utls;
+    // const lsl = response.lsls;
+    // const usl = response.usls;
+    // const ltl = response.ltls;
+    // const utl = response.utls;
     const id_od = response.idorod; // Job Dia information (ID/OD)
     const digits = response.digits;
 
@@ -706,7 +706,7 @@ document.getElementById("highMasterBtn").addEventListener("click", function () {
                 }
 
                 const nominalValue = nominals[index] || 0;
-                performCalculations(a, a1, b, b1, nominalValue, index, textareaId, lsl, usl, ltl, utl, step_no,digits);
+                performCalculations(a, a1, b, b1, nominalValue, index, textareaId, step_no,digits);
 
                 const highRawMasterInput = document.getElementById(`high_raw_count${index + 1}`);
                 if (highRawMasterInput) {
@@ -758,7 +758,7 @@ document.getElementById("highMasterBtn").addEventListener("click", function () {
             }
 
             const nominalValue = nominals[selectedIndex] || 0;
-            performCalculations(a, a1, b, b1, nominalValue, selectedIndex, textareaId, lsl, usl, ltl, utl, step_no,digits);
+            performCalculations(a, a1, b, b1, nominalValue, selectedIndex, textareaId, step_no,digits);
             
             const highRawMasterInput = document.getElementById(`high_raw_count${selectedIndex + 1}`);
             if (highRawMasterInput) {
@@ -781,17 +781,17 @@ var containerIntervals = {};
 
 
 
-function performCalculations(a, a1, b, b1, e, index, textareaId, lsl, usl, ltl, utl, step_no, digits) {
+function performCalculations(a, a1, b, b1, e, index, textareaId, step_no, digits) {
     // Ensure all values are parsed as floats
     a = parseFloat(a);
     a1 = parseFloat(a1);
     b = parseFloat(b);
     b1 = parseFloat(b1);
     e = parseFloat(e);
-    lsl = parseFloat(lsl);
-    usl = parseFloat(usl);
-    ltl = parseFloat(ltl);
-    utl = parseFloat(utl);
+    // lsl = parseFloat(lsl);
+    // usl = parseFloat(usl);
+    // ltl = parseFloat(ltl);
+    // utl = parseFloat(utl);
     step_no = parseFloat(step_no);
     digits = parseFloat(digits[index]);
     const response = window.fetchedResponse;
@@ -844,13 +844,13 @@ function performCalculations(a, a1, b, b1, e, index, textareaId, lsl, usl, ltl, 
                 outputInput.value = displayOutput.toFixed(digits); // Update outputInput (center_input${index + 1}) with the calculated value
                 
                 var k = displayOutput;
-                if (k >= lsl && k <= usl) {
-                    outputInput.style.backgroundColor = '#00ff00'; // Green
-                } else if ((k > usl && k <= utl) || (k >= ltl && k < lsl)) {
-                    outputInput.style.backgroundColor = 'yellow';
-                } else if (k > utl || k < ltl) {
-                    outputInput.style.backgroundColor = 'red';
-                }
+                // if (k >= lsl && k <= usl) {
+                //     outputInput.style.backgroundColor = '#00ff00'; // Green
+                // } else if ((k > usl && k <= utl) || (k >= ltl && k < lsl)) {
+                //     outputInput.style.backgroundColor = 'yellow';
+                // } else if (k > utl || k < ltl) {
+                //     outputInput.style.backgroundColor = 'red';
+                // }
             } else {
                 console.error("Invalid value in textarea.");
             }

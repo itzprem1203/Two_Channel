@@ -4,7 +4,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import json
 from django.views.decorators.csrf import csrf_exempt
-from app.models import MeasurementData, Parameter_Settings,part_retrived, ComportSetting, Data_Shift,User_Data, master_data, paraTableData
+from app.models import angle_stored, Parameter_Settings,part_retrived, ComportSetting, Data_Shift,User_Data, master_data, paraTableData
 import serial.tools.list_ports
 from collections import defaultdict
 from django.db.models import Count
@@ -43,13 +43,13 @@ def measurement(request):
         low_master_array = []
         high_master_array = []
         nominal_array = []
-        lsl_array = []
-        usl_array = []
-        ltl_array = []
-        utl_array = []
+        # lsl_array = []
+        # usl_array = []
+        # ltl_array = []
+        # utl_array = []
         step_no_array = []
-        auto_man_array = []
-        timer_array = []
+        # auto_man_array = []
+        # timer_array = []
         digits_array = []
 
         for data in related_data:
@@ -58,13 +58,13 @@ def measurement(request):
             low_master_array.append(data.low_master)
             high_master_array.append(data.high_master)
             nominal_array.append(data.nominal)
-            lsl_array.append(data.lsl)
-            usl_array.append(data.usl)
-            ltl_array.append(data.ltl)
-            utl_array.append(data.utl)
+            # lsl_array.append(data.lsl)
+            # usl_array.append(data.usl)
+            # ltl_array.append(data.ltl)
+            # utl_array.append(data.utl)
             step_no_array.append(data.step_no)
-            auto_man_array.append(data.auto_man)
-            timer_array.append(data.timer)
+            # auto_man_array.append(data.auto_man)
+            # timer_array.append(data.timer)
             digits_array.append(data.digits)
 
 
@@ -121,13 +121,13 @@ def measurement(request):
             'low_master_array': low_master_array,
             'high_master_array': high_master_array,
             'nominal_array': nominal_array,
-            'lsl_array': lsl_array,
-            'usl_array': usl_array,
-            'ltl_array': ltl_array,
-            'utl_array': utl_array,
+            # 'lsl_array': lsl_array,
+            # 'usl_array': usl_array,
+            # 'ltl_array': ltl_array,
+            # 'utl_array': utl_array,
             'step_no_array': step_no_array,
-            'auto_man_array': auto_man_array,
-            'timer_array': timer_array,
+            # 'auto_man_array': auto_man_array,
+            # 'timer_array': timer_array,
             'digits_array': digits_array,
             'parameter_values':parameter_values,
         })

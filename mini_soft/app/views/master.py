@@ -53,10 +53,10 @@ def master(request):
         high_masters = []
         probe_number = []
         nominals = []
-        lsls = []
-        usls = []
-        ltls = []
-        utls = []
+        # lsls = []
+        # usls = []
+        # ltls = []
+        # utls = []
         stepnumbers = []
         idorod = []
         digits = []
@@ -79,10 +79,10 @@ def master(request):
                         high_masters.append(data.high_master)
                         probe_number.append(data.channel_no)
                         nominals.append(data.nominal)
-                        lsls.append(data.lsl)
-                        usls.append(data.usl)
-                        ltls.append(data.ltl)
-                        utls.append(data.utl)
+                        # lsls.append(data.lsl)
+                        # usls.append(data.usl)
+                        # ltls.append(data.ltl)
+                        # utls.append(data.utl)
                         stepnumbers.append(data.step_no)
                         idorod.append(data.id_od)
                         digits.append(data.digits)
@@ -113,10 +113,10 @@ def master(request):
             "high_masters":high_masters,
             "probe_number":probe_number,
             "nominals":nominals,
-            "lsls":lsls,
-            "usls":usls,
-            "ltls":ltls,
-            "utls":utls,
+            # "lsls":lsls,
+            # "usls":usls,
+            # "ltls":ltls,
+            # "utls":utls,
             "stepnumbers":stepnumbers,
             "idorod":idorod,
             "digits": digits,

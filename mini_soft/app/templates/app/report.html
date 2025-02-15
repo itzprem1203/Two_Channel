@@ -64,22 +64,8 @@
 
 
 
-        <label for="status_select">STATUS:</label>
-        <select id="status_select">
-            <option value="ALL" >ALL</option>
-            <option value="ACCEPT" id="accept">ACCEPT</option>
-            <option value="REJECT" id="reject">REJECT</option>
-            <option value="REWORK" id="rework">REWORK</option>
-        </select>
-
-        <label for="mode">MODE:</label>
-        <select id="mode">
-            <option value="readings" >READINGS</option>
-            <option value="max" id="max">MAX</option>
-            <option value="min" id="min">MIN</option>
-            <option value="tir" id="tir">TIR</option>
-        </select>
-
+        
+        
         <div id="loading_spinner" style="display: none;">
             <i class="fas fa-spinner fa-spin"></i> 
         </div>
@@ -172,10 +158,8 @@ $('#download_pdf').click(function () {
     // Collect filter inputs
     const fromDate = $('#from_date').val();
     const partModel = $('#part_model').val();
-    const mode = $('#mode').val();
     const toDate = $('#to_date').val();
     const shift = $('#shift_select').val();
-    const status = $('#status_select').val();
     const total_count = $('#total_count').val();
 
     console.log('Full Table HTML:', fullTableHtml); // Log full table data for debugging
@@ -188,10 +172,8 @@ $('#download_pdf').click(function () {
             table_html: fullTableHtml, // Send all rows as HTML
             from_date: fromDate,
             part_model: partModel,
-            mode: mode,
             to_date: toDate,
             shift: shift,
-            status: status,
             total_count: total_count,
             csrfmiddlewaretoken: '{{ csrf_token }}' // CSRF token for security
         },
@@ -236,10 +218,8 @@ $('#download_xlsx').click(function () {
     // Collect filter inputs
     const fromDate = $('#from_date').val();
     const partModel = $('#part_model').val();
-    const mode = $('#mode').val();
     const toDate = $('#to_date').val();
     const shift = $('#shift_select').val();
-    const status = $('#status_select').val();
     const total_count = $('#total_count').val();
 
     console.log('Full Table HTML:', fullTableHtml); // Log full table data for debugging
@@ -252,10 +232,8 @@ $('#download_xlsx').click(function () {
             table_html: fullTableHtml, // Send all rows as HTML
             from_date: fromDate,
             part_model: partModel,
-            mode: mode,
             to_date: toDate,
             shift: shift,
-            status: status,
             total_count: total_count,
             csrfmiddlewaretoken: '{{ csrf_token }}' // CSRF token for security
         },
@@ -464,19 +442,16 @@ $('#search_btn').click(function (event) {
     // Collect input values
     const fromDate = $('#from_date').val();
     const partModel = $('#part_model').val();
-    const mode = $('#mode').val();
     const toDate = $('#to_date').val();
     const shift = $('#shift_select').val();
-    const status = $('#status_select').val();
+
 
     // Payload for AJAX
     const payload = {
         from_date: fromDate,
         part_model: partModel,
-        mode: mode,
         to_date: toDate,
         shift: shift,
-        status: status,
     };
     console.log('Payload:', payload);
 

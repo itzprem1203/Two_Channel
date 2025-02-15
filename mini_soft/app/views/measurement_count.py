@@ -5,7 +5,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 import json
 from django.views.decorators.csrf import csrf_exempt
-from app.models import MeasurementData
+from app.models import angle_stored
 from collections import defaultdict
 from django.db.models import Count
 
@@ -41,7 +41,7 @@ def measurement_count(request):
 
         # Query MeasurementData to fetch date and overall_status
         filtered_data = (
-            MeasurementData.objects
+            angle_stored.objects
             .filter(date__date=formatted_date, shift=input_shift)  # Fetch date and overall_status
             .values('date', 'overall_status')
             .annotate(count=Count('overall_status'))  # Count occurrences of overall_status

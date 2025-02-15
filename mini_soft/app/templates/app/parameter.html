@@ -75,13 +75,7 @@
                 <th style="width: 8%;">LOW MASTER</th>
                 <th style="width: 8%;">HIGH MASTER</th>
                 <th style="width: 6%;">NOMINAL</th>
-                <th style="width: 6%;">LSL</th>
-                <th style="width: 6%;">USL</th>
-                <th style="width: 6%;">LTL</th>
-                <th style="width: 6%;">UTL</th>
                 <th style="width: 5%;">STEP NO</th>
-                <th style="width: 6%;">AUTO/MAN</th>
-                <th style="width: 5%;">TIMER</th>
                 <th style="width: 5%;">DIGITS</th>
                 <th style="width: 5%;">ID/OD</th>
             </tr>
@@ -164,7 +158,7 @@ function createTableRows() {
 
     const columnNames = [
         "SR_NO", "PARAMETER_NAME", "CHANNEL_NO", "LOW_MASTER", "HIGH_MASTER", 
-        "NOMINAL", "LSL", "USL", "LTL", "UTL", "STEP_NO","AUTO_MAN","TIMER", "DIGITS", "ID_OD"
+        "NOMINAL", "STEP_NO","DIGITS", "ID_OD"
     ];
 
     const cycleOptions = {
@@ -175,7 +169,7 @@ function createTableRows() {
     };
 
     const numericColumns = [
-        "LOW_MASTER", "HIGH_MASTER", "NOMINAL", "LSL", "USL", "LTL", "UTL","TIMER"
+        "LOW_MASTER", "HIGH_MASTER", "NOMINAL"
     ];
 
     // Create 4 rows dynamically
@@ -191,43 +185,8 @@ function createTableRows() {
                 cell.textContent = i;
                 cell.style.backgroundColor = "white";
             }
-            else if (index === 11) {
-                // Add a checkbox for AUTO_MAN column
-                const checkbox = document.createElement("input");
-                checkbox.type = "checkbox";
-                checkbox.style.cursor = "pointer";
-                checkbox.style.width = "30px";
-                checkbox.style.height = "30px";
-
-                cell.appendChild(checkbox);
-
-                // Add a reference to the TIMER input field (index 12)
-                checkbox.addEventListener("change", (event) => {
-                    const timerInput = document.querySelector(`#row-${i}-TIMER`);
-                    if (event.target.checked) {
-                        timerInput.disabled = false;
-                    } else {
-                        timerInput.disabled = true;
-                        timerInput.value = ''; // Clear the TIMER input field when disabled
-                    }
-                });
-            } else if (index === 12) {
-                // Add an input field for TIMER and make it disabled by default
-                const timerInput = document.createElement("input");
-                timerInput.type = "text";
-                timerInput.id = `row-${i}-TIMER`;
-                timerInput.disabled = true; // Initially disabled
-
-                // Add validation for numeric inputs
-                timerInput.addEventListener("input", () => {
-                    timerInput.value = timerInput.value.replace(/[^0-9.]/g, ''); // Allow only numbers and periods
-                    if ((timerInput.value.match(/\./g) || []).length > 1) {
-                        timerInput.value = timerInput.value.slice(0, -1); // Allow only one period
-                    }
-                });
-
-                cell.appendChild(timerInput);
-            }  else if (cycleOptions[colName]) {
+            
+            else if (cycleOptions[colName]) {
                 // Columns that require cycling through values
                 const button = document.createElement("button");
                 button.textContent = cycleOptions[colName][0];
@@ -352,18 +311,14 @@ $(document).ready(function () {
         $("#tableBody-1 tr").each(function (rowIndex) {
             const row = {};
             let emptyFields = []; // Track empty fields in the row
-            let usl = null;
-            let lsl = null;
-            let utl = null;
-            let ltl = null;
-
+            
             const stepNo = $(this).find("td").eq(10).text(); // Assuming STEP_NO is in the 11th column
             if (!stepGroups[stepNo]) stepGroups[stepNo] = [];
 
             $(this).find("td").each(function (index, td) {
                 const colName = [
                     "SR_NO", "PARAMETER_NAME", "CHANNEL_NO", "LOW_MASTER", "HIGH_MASTER", 
-                    "NOMINAL", "LSL", "USL", "LTL", "UTL", "STEP_NO", "AUTO_MAN", "TIMER", "DIGITS", "ID_OD"
+                    "NOMINAL", "STEP_NO", "DIGITS", "ID_OD"
                 ][index];
 
                 const input = $(td).find("input");
@@ -371,11 +326,7 @@ $(document).ready(function () {
                 const button = $(td).find("button");
 
                 // Handle input and other field types
-                if (colName === "AUTO_MAN") {
-                    row[colName] = checkbox.is(":checked") ? "on" : "off";
-                } else if (colName === "TIMER") {
-                    row[colName] = input.val()?.trim() || "";
-                } else if (button.length) {
+                if (button.length) {
                     row[colName] = button.text().trim();
                 } else if (input.length) {
                     row[colName] = input.val()?.trim() || "";
@@ -383,38 +334,18 @@ $(document).ready(function () {
                     row[colName] = $(td).text().trim();
                 }
 
-                // Validate non-optional fields (excluding AUTO_MAN and TIMER)
-                if (!row[colName] && colName !== "AUTO_MAN" && colName !== "TIMER") {
-                    emptyFields.push(colName);
-                }
+                
 
-                // Convert numeric columns to numbers for validation
-                if (colName === "LSL") lsl = parseFloat(row[colName]);
-                if (colName === "USL") usl = parseFloat(row[colName]);
-                if (colName === "LTL") ltl = parseFloat(row[colName]);
-                if (colName === "UTL") utl = parseFloat(row[colName]);
+                
             });
 
             // Add row to step group
             stepGroups[stepNo].push({
                 rowIndex: rowIndex + 1, // 1-based index for user-friendly messages
-                autoMan: row["AUTO_MAN"],
-                timer: row["TIMER"]
             });
 
             // Validate USL > LSL and UTL > LTL
-            if (usl !== null && lsl !== null && usl <= lsl) {
-                validationFailed = true;
-                validationMessage += `Row ${rowIndex + 1}: USL must be greater than LSL.\n`;
-                $(this).addClass("error-row");
-            }
-            if (utl !== null && ltl !== null && utl <= ltl) {
-                validationFailed = true;
-                validationMessage += `Row ${rowIndex + 1}: UTL must be greater than LTL.\n`;
-                $(this).addClass("error-row");
-            } else {
-                $(this).removeClass("error-row");
-            }
+            
 
             if (emptyFields.length > 0) {
                 validationFailed = true;
@@ -430,36 +361,7 @@ $(document).ready(function () {
         // Validate AUTO_MAN and TIMER for each STEP_NO
         for (let stepNo in stepGroups) {
             const rowsInStep = stepGroups[stepNo];
-            let autoManChecked = null;
-            let timerValue = null;
-
-            for (const row of rowsInStep) {
-                // Ensure AUTO_MAN is consistent within the step
-                if (autoManChecked === null) {
-                    autoManChecked = row.autoMan === "on";
-                } else if (autoManChecked !== (row.autoMan === "on")) {
-                    validationFailed = true;
-                    validationMessage += `Step ${stepNo}: AUTO_MAN must be consistent (all checked or unchecked).\n`;
-                    break;
-                }
-
-                // Validate TIMER if AUTO_MAN is checked
-                if (autoManChecked) {
-                    if (!row.timer) {
-                        validationFailed = true;
-                        validationMessage += `Step ${stepNo}, Row ${row.rowIndex}: TIMER cannot be empty when AUTO_MAN is checked.\n`;
-                        break;
-                    }
-
-                    if (timerValue === null) {
-                        timerValue = row.timer;
-                    } else if (row.timer !== timerValue) {
-                        validationFailed = true;
-                        validationMessage += `Step ${stepNo}: TIMER must be the same for all rows with AUTO_MAN checked.\n`;
-                        break;
-                    }
-                }
-            }
+            
         }
 
         if (validationFailed) {
@@ -563,22 +465,13 @@ $(document).ready(function () {
                                     <td><input type="text" class="number-only" value="${row.low_master}"></td>
                                     <td><input type="text" class="number-only" value="${row.high_master}"></td>
                                     <td><input type="text" class="number-only" value="${row.nominal}"></td>
-                                    <td><input type="text" class="number-only" value="${row.lsl}"></td>
-                                    <td><input type="text" class="number-only" value="${row.usl}"></td>
-                                    <td><input type="text" class="number-only" value="${row.ltl}"></td>
-                                    <td><input type="text" class="number-only" value="${row.utl}"></td>
+                                    
                                     <td>
                                         <button class="cycle-button" data-column="step_no" data-index="0">
                                             ${row.step_no}
                                         </button>
                                     </td>
-                                    <td>
-                                        <input type="checkbox" ${row.auto_man ? 'checked' : ''} class="auto-man-checkbox">
-                                    </td>
-                                    <td>
-                                        <input type="text" class="number-only timer-input" value="${row.timer}" ${row.auto_man ? '' : 'disabled'}>
-                                    </td>
-
+                                    
                                     <td>
                                         <button class="cycle-button" data-column="digits" data-index="0">
                                             ${row.digits}
@@ -641,16 +534,7 @@ $(document).ready(function () {
                             });
                         });
 
-                          // Toggle 'disabled' state based on checkbox status
-                          $('.auto-man-checkbox').on('change', function () {
-                            const checkbox = $(this);
-                            const timerInput = checkbox.closest('tr').find('.timer-input');
-                            if (checkbox.prop('checked')) {
-                                timerInput.prop('disabled', false); // Enable input
-                            } else {
-                                timerInput.prop('disabled', true); // Disable input
-                            }
-                        });
+                          
 
                         // Add row selection functionality (single row selection with red background)
                         $('#tableBody-1').on('click', 'tr', function () {

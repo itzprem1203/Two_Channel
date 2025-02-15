@@ -3,7 +3,7 @@ import json
 from django.http import  JsonResponse
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from app.models import MeasurementData, Parameter_Settings, master_data,paraTableData
+from app.models import angle_stored, Parameter_Settings, master_data,paraTableData
 
 
 @csrf_exempt  # For development only; use CSRF protection in production
@@ -56,8 +56,7 @@ def parameter(request):
                 for row in table_data:
                     sr_no = row.get('SR_NO')  # Unique identifier
 
-                    # Convert AUTO_MAN to boolean
-                    auto_man_value = row.get('AUTO_MAN', '').lower() == 'on'
+                   
 
                     # Try to find the existing row by SR_NO
                     existing_row = paraTableData.objects.filter(parameter_settings=existing_part_model, sr_no=sr_no).first()
@@ -69,13 +68,7 @@ def parameter(request):
                         existing_row.low_master = row.get('LOW_MASTER')
                         existing_row.high_master = row.get('HIGH_MASTER')
                         existing_row.nominal = row.get('NOMINAL')
-                        existing_row.lsl = row.get('LSL')
-                        existing_row.usl = row.get('USL')
-                        existing_row.ltl = row.get('LTL')
-                        existing_row.utl = row.get('UTL')
                         existing_row.step_no = row.get('STEP_NO')
-                        existing_row.auto_man = auto_man_value  # Use converted value
-                        existing_row.timer = row.get('TIMER', '')  # Optional default
                         existing_row.digits = row.get('DIGITS')
                         existing_row.id_od = row.get('ID_OD')
                         existing_row.save()
@@ -89,13 +82,7 @@ def parameter(request):
                             low_master=row.get('LOW_MASTER'),
                             high_master=row.get('HIGH_MASTER'),
                             nominal=row.get('NOMINAL'),
-                            lsl=row.get('LSL'),
-                            usl=row.get('USL'),
-                            ltl=row.get('LTL'),
-                            utl=row.get('UTL'),
                             step_no=row.get('STEP_NO'),
-                            auto_man=auto_man_value,  # Use converted value
-                            timer=row.get('TIMER', ''),  # Optional default
                             digits=row.get('DIGITS'),
                             id_od=row.get('ID_OD')
                         )
@@ -125,13 +112,7 @@ def parameter(request):
                         low_master=row.get('LOW_MASTER'),
                         high_master=row.get('HIGH_MASTER'),
                         nominal=row.get('NOMINAL'),
-                        lsl=row.get('LSL'),
-                        usl=row.get('USL'),
-                        ltl=row.get('LTL'),
-                        utl=row.get('UTL'),
                         step_no=row.get('STEP_NO'),
-                        auto_man=row.get('AUTO_MAN', '').lower() == 'on',  # Convert to boolean
-                        timer=row.get('TIMER', ''),  # Optional default
                         digits=row.get('DIGITS'),
                         id_od=row.get('ID_OD')
                     )
@@ -155,7 +136,7 @@ def parameter(request):
 
             # Attempt to delete the corresponding record
             deleted_count, _ = Parameter_Settings.objects.filter(part_model=part_model).delete()
-            delete_count1, _ = MeasurementData.objects.filter(part_model=part_model).delete()
+            delete_count1, _ = angle_stored.objects.filter(part_model=part_model).delete()
             delete_count2, _ = master_data.objects.filter(part_model=part_model).delete()
 
             if deleted_count > 0:
@@ -186,13 +167,7 @@ def parameter(request):
                         "low_master": row.low_master,
                         "high_master": row.high_master,
                         "nominal": row.nominal,
-                        "lsl": row.lsl,
-                        "usl": row.usl,
-                        "ltl": row.ltl,
-                        "utl": row.utl,
                         "step_no": row.step_no,
-                        "auto_man": row.auto_man,  # Include auto_man field
-                        "timer": row.timer,       # Include timer field
                         "digits": row.digits,
                         "id_od": row.id_od,
                     }

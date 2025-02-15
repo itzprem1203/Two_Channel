@@ -1,7 +1,7 @@
 import json
 from django.shortcuts import render
 
-from app.models import Parameter_Settings, paraTableData,MeasurementData
+from app.models import Parameter_Settings, paraTableData,angle_stored
 import plotly.graph_objs as go
 import plotly.io as pio
 from plotly.offline import plot
@@ -34,18 +34,18 @@ def spc(request):
             for pname in parameter_names:
                 # Query readings and metadata for the current parameter
                 readings = list(
-                    MeasurementData.objects.filter(
+                    angle_stored.objects.filter(
                         part_model=part_model, parameter_name=pname
                     ).order_by('-date')[:25].values_list('output', flat=True)
                 )[::-1]
 
                 dates = list(
-                    MeasurementData.objects.filter(
+                    angle_stored.objects.filter(
                         part_model=part_model, parameter_name=pname
                     ).order_by('-date')[:25].values_list('date', flat=True)
                 )[::-1]
 
-                limits = MeasurementData.objects.filter(
+                limits = angle_stored.objects.filter(
                     part_model=part_model, parameter_name=pname
                 ).order_by('date').values('usl', 'lsl', 'utl', 'ltl', 'nominal').first()
 
